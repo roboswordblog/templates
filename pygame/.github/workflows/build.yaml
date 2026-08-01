@@ -1,0 +1,41 @@
+name: Build Game
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install pygame-ce pyinstaller
+
+      - name: Build Windows
+        if: runner.os == 'Windows'
+        run: |
+          pyinstaller --onedir --windowed --add-data "assets;assets" main.py
+
+      - name: Build Linux/macOS
+        if: runner.os != 'Windows'
+        run: |
+          pyinstaller --onedir --windowed --add-data "assets:assets" main.py
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ runner.os }}
+          path: dist/
