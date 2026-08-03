@@ -8,4 +8,8 @@ class ClientHandler:
         self.SERVER = ""
         self.ADDR = (self.SERVER, self.PORT)
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client.connect(self.addr)
+        self.client.connect(self.ADDR)
+
+    def send(self, msg):
+        message = msg.encode(self.FORMAT)
+        self.client.send(message)
