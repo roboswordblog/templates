@@ -25,8 +25,10 @@ class Server:
             if msg == self.DISCONNECT_MESSAGE:
                 self.playerConnect -= 1
                 self.players.remove(player for player in self.players if player.conn == conn)
+
             playerDict = json.dumps(player.__dict__ for player in self.players if player.conn == conn)
-            conn.send(self.FORMAT.encode())
+            conn.send(playerDict.encode(self.FORMAT))
+
     def start(self):
         self.server.listen()
         while True:
